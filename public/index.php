@@ -17,7 +17,8 @@ $log = new Logger('logchannel');
 $log->pushHandler(new StreamHandler(__DIR__ . '/../access.log', Logger::INFO));
 
 
-$requestPath = $_SERVER['PATH_INFO'];
+$rawRequest = (object)parse_url($_SERVER['REQUEST_URI']);
+$requestPath = $rawRequest->path;
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 $log->info("$requestMethod $requestPath");
 
