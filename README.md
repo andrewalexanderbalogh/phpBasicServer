@@ -13,6 +13,12 @@ The `employees` database structure is as defined at;
 First create a `.env` file at the root of the project with values that follow 
 those given in the `.env.example` file.
 
+Install the package dependencies with _Composer_;
+```bash
+composer install
+```
+
+
 Then start the API-Server through;
 ```bash
 php -S localhost:8080 -t /public

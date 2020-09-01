@@ -55,7 +55,12 @@ header('Access-Control-Allow-Headers: Authorization, Content-Type, X-Portal-User
 switch ($requestMethod){
 case 'GET':
     /* GET Endpoints */
-    if ($requestPath === '/departments') {
+    if (!$requestPath || $requestPath === '/'){
+        http_response_code(200);
+        require __DIR__ . '/../views/welcome.php';
+        break;
+    }
+    else if ($requestPath === '/departments') {
         # /departments
         $statement = $pdo->prepare("
             SELECT *
@@ -101,7 +106,7 @@ case 'GET':
     }
     else {
         http_response_code(404);
-        echo 'Not Found';
+        require __DIR__ . '/../views/404.php';
     }
 
     break;
@@ -146,7 +151,7 @@ case 'POST':
     }
     else {
         http_response_code(404);
-        echo 'Not Found';
+        require __DIR__ . '/../views/404.php';
     }
 
 

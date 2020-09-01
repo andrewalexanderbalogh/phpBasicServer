@@ -1,6 +1,7 @@
 {
   "name": "laundroworks/php-test-server",
   "description": "Basic PHP Route Server Backend for tests",
+  "homepage": "https://github.com/andrewalexanderbalogh/phpBasicServer",
   "license": "MIT",
   "type": "project",
   "require": {
