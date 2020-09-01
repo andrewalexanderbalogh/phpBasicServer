@@ -8,8 +8,19 @@ $env = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $env->load();
 
 
-$requestPath = $_SERVER['REQUEST_URI'];
+/** Local Access logging with monolog library
+ * https://packagist.org/packages/monolog/monolog
+ */
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+$log = new Logger('logchannel');
+$log->pushHandler(new StreamHandler(__DIR__ . '/../access.log', Logger::INFO));
+
+
+$requestPath = $_SERVER['PATH_INFO'];
 $requestMethod = $_SERVER['REQUEST_METHOD'];
+$log->info("$requestMethod $requestPath");
+
 /* Parse out and process POST data (JSON format expected) */
 $rawJSON = file_get_contents('php://input');
 $jsonData = json_decode($rawJSON, false);
@@ -37,8 +48,8 @@ catch (PDOException $e){
 switch ($requestMethod){
 case 'GET':
     /* GET Endpoints */
-    switch ($requestPath){
-    case '/departments':
+    if ($requestPath === '/departments') {
+        # /departments
         $statement = $pdo->prepare("
             SELECT *
             FROM departments;
@@ -48,25 +59,53 @@ case 'GET':
         $results = $statement->fetchAll(PDO::FETCH_OBJ);
         http_response_code(200);
         echo json_encode($results);
-        break;
+    }
+    else if (preg_match('/\/employee\/(\d+)/', $requestPath, $matches)){
+        # /employee/<EMP_NO>
+        $emp_no = $matches[1];
 
+        $statement = $pdo->prepare("
+            SELECT *
+            FROM employees
+            WHERE employees.emp_no = '$emp_no';
+        ");
 
+        $statement->execute();
+        $results = $statement->fetchAll(PDO::FETCH_OBJ);
+        http_response_code(200);
+        echo json_encode($results);
+    }
+    else if (preg_match('/\/employees/', $requestPath)){
+        # /employees?gender=<GENDER>&hire_date=<HIRE_DATE>
+        $gender = $_GET['gender'] ?? '';
+        $hire_date = $_GET['hire_date'] ?? '';
 
-    default:
+        $statement = $pdo->prepare("
+            SELECT *
+            FROM employees
+            WHERE employees.gender = '$gender'
+                AND employees.hire_date >= '$hire_date';
+        ");
+
+        $statement->execute();
+        $results = $statement->fetchAll(PDO::FETCH_OBJ);
+        http_response_code(200);
+        echo json_encode($results);
+    }
+    else {
         http_response_code(404);
         echo 'Not Found';
-            break;
     }
-
-
 
     break;
 
 
+
+
 case 'POST':
     /* POST Endpoints */
-    switch ($requestPath){
-    case '/employees':
+    if ($requestPath === '/employees') {
+        # /employees
         try {
             $pdo->exec("
                 INSERT INTO employees (
@@ -92,20 +131,20 @@ case 'POST':
             http_response_code(200);
             echo 'Inserted new Employee record';
         }
-        catch (PDOException $e){
+        catch (PDOException $e) {
             http_response_code(502);
             echo 'Could not perform query: ' . $e->getMessage();
         }
 
-        break;
-
-
-
-    default:
+    }
+    else {
         http_response_code(404);
         echo 'Not Found';
-        break;
     }
+
+
+
+
     break;
 
 
