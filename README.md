@@ -24,7 +24,7 @@ Then start the API-Server through;
 php -S localhost:8080 -t /public
 ```
 
-This will start the express server at `localhost:8080`
+This will start the server at `localhost:8080`
 
 
 ### Endpoints
