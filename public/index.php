@@ -44,6 +44,13 @@ catch (PDOException $e){
 }
 
 
+header('Access-Control-Allow-Origin: ' . ($_SERVER['HTTP_ORIGIN'] ?? '*'));
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Authorization, Content-Type, X-Portal-User, X-Portal-API-User, X-Portal-API-UUID');
+
+
+
 /* Provide Response according to Request Method */
 switch ($requestMethod){
 case 'GET':
@@ -145,6 +152,12 @@ case 'POST':
 
 
 
+    break;
+
+
+case 'OPTIONS':
+    /* Pre-Flight Requests typically */
+    http_response_code(200);
     break;
 
 
