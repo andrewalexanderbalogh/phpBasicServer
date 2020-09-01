@@ -1,0 +1,16 @@
+{
+  "name": "laundroworks/php-test-server",
+  "description": "Basic PHP Route Server Backend for tests",
+  "license": "MIT",
+  "type": "project",
+  "require": {
+    "monolog/monolog": "^2.1.1",
+    "vlucas/phpdotenv": "^5.1.0",
+    "ext-pdo": "*",
+    "ext-json": "*"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "optimize-autoloader": true
+  }
+}
